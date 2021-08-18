@@ -21,7 +21,7 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
+mongoose.connect('mongodb://localhost:27017/moviesdb', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
