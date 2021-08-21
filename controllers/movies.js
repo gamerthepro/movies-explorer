@@ -57,7 +57,7 @@ module.exports.deleteMovie = (req, res, next) => {
     })
     .catch((err) => {
       if (err.message === 'invalidUserId') {
-        throw new NotFoundError(err.message);
+        throw new NotFoundError('Пользователя нет в базе');
       }
       if (err.name === 'CastError') {
         throw new BadRequestError('Введенные данные некорректны');
