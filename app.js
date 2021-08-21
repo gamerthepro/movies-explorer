@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const helmet = require('helmet');
 const cors = require('cors');
+const MONGO_DB = require('./config');
 
 require('dotenv').config();
 
@@ -21,7 +22,7 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://localhost:27017/moviesdb', {
+mongoose.connect(MONGO_DB, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
