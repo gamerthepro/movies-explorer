@@ -4,6 +4,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/404-NotFoundError');
 const BadRequestError = require('../errors/400-BadRequestError');
 const AuthorizedError = require('../errors/401-UnauthorizedError');
+const ConflictError = require('../errors/409-ConflictError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -25,7 +26,7 @@ module.exports.signUp = (req, res, next) => {
       .send({ _id: user._id, email: user.email, name: user.name }))
     .catch((err) => {
       if (err.name === 'MongoError' || err.code === 11000) {
-        throw new BadRequestError('Пользователь с таким email уже существует');
+        throw new ConflictError('Пользователь с таким email уже существует');
       } else if (err.name === 'ValidationError' || err.name === 'CastError') {
         throw new BadRequestError('Пароль или почта некорректны');
       }
