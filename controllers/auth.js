@@ -22,7 +22,7 @@ module.exports.signUp = (req, res, next) => {
     }))
     .then((user) => res
       .status(200)
-      .send({ data: { _id: user._id, email: user.email } }))
+      .send({ _id: user._id, email: user.email, name: user.name }))
     .catch((err) => {
       if (err.name === 'MongoError' || err.code === 11000) {
         throw new BadRequestError('Пользователь с таким email уже существует');
