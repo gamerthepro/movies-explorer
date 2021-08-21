@@ -2,6 +2,7 @@ const Movie = require('../models/movie');
 const BadRequestError = require('../errors/400-BadRequestError');
 const NotFoundError = require('../errors/404-NotFoundError');
 const ForbiddenError = require('../errors/403-ForbiddenError');
+const { errorMessages } = require('../utils/constants');
 
 module.exports.createMovie = (req, res, next) => {
   const {
@@ -46,10 +47,10 @@ module.exports.deleteMovie = (req, res, next) => {
     })
     .then((data) => {
       if (data.owner._id.toString() !== req.user._id.toString()) {
-        throw new ForbiddenError('Чужие фильмы нельзя удалять');
+        throw new ForbiddenError(errorMessages.cannotDeleteMovie);
       }
       Movie.findByIdAndRemove(req.params.id)
-        .then((movie) => res.status(200).send({ data: movie }))
+        .then((movie) => res.status(200).send(movie))
         .catch((err) => {
           throw new NotFoundError(err.message);
         })
@@ -57,10 +58,10 @@ module.exports.deleteMovie = (req, res, next) => {
     })
     .catch((err) => {
       if (err.message === 'invalidUserId') {
-        throw new NotFoundError('Пользователя нет в базе');
+        throw new NotFoundError(errorMessages.notFoundDatabaseUser);
       }
       if (err.name === 'CastError') {
-        throw new BadRequestError('Введенные данные некорректны');
+        throw new BadRequestError(errorMessages.incorrectData);
       }
       next(err);
     })

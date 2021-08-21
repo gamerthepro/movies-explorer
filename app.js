@@ -5,6 +5,9 @@ const { errors } = require('celebrate');
 const helmet = require('helmet');
 const cors = require('cors');
 const MONGO_DB = require('./config');
+const centralizedError = require('./middlewares/centralizedError');
+const { errorMessages } = require('./utils/constants');
+const limiter = require('./middlewares/limiter');
 
 require('dotenv').config();
 
@@ -16,6 +19,7 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
+app.use(limiter);
 app.use(cookieParser());
 app.use(cors());
 app.use(helmet());
@@ -27,6 +31,7 @@ mongoose.connect(MONGO_DB, {
   useCreateIndex: true,
   useFindAndModify: false,
 });
+
 app.use(routes);
 
 app.use(requestLogger);
@@ -34,16 +39,11 @@ app.use(requestLogger);
 app.use(errors());
 
 app.use(() => {
-  throw new NotFoundError('Запрашиваемый ресурс не найден');
+  throw new NotFoundError(errorMessages.notFuound);
 });
-
 app.use(errorLogger);
 
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res.status(err.statusCode).send({ message: statusCode === 500 ? 'Что-то пошло не так' : message });
-  next();
-});
+app.use(centralizedError);
 
 app.listen(PORT, () => {
   console.log(`server started, Port: ${PORT}`);
