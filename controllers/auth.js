@@ -27,7 +27,7 @@ module.exports.signUp = (req, res, next) => {
       .send({ _id: user._id, email: user.email, name: user.name }))
     .catch((err) => {
       if (err.name === 'MongoError' || err.code === 11000) {
-        throw new ConflictError(errorMessages.UserIdExist);
+        throw new ConflictError(errorMessages.userIdExist);
       } else if (err.name === 'ValidationError' || err.name === 'CastError') {
         throw new BadRequestError(errorMessages.incorrectEmailPassword);
       }
