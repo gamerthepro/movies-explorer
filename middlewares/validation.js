@@ -50,14 +50,7 @@ module.exports.signupValidation = celebrate({
   body: Joi
     .object()
     .keys({
-      name: Joi.string().min(2).max(30),
-      about: Joi.string().min(2).max(30),
-      avatar: Joi.string().custom((value, helpers) => {
-        if (validator.isURL(value, { require_protocol: true, disallow_auth: true })) {
-          return value;
-        }
-        return helpers.message('Неправильный формат ссылки');
-      }),
+      name: Joi.string().required().min(2).max(30),
       email: Joi.string().required().email(),
       password: Joi.string().required().min(8),
     }),
@@ -77,7 +70,7 @@ module.exports.userInfoValidation = celebrate({
     .object()
     .keys({
       name: Joi.string().min(2).max(30),
-      about: Joi.string().min(2).max(30),
+      email: Joi.string().email(),
       password: Joi.string(),
     }),
 });

@@ -16,6 +16,11 @@ const errorMessages = {
   invalidLinkInPoster: 'Неправильный формат ссылки на постер',
   invalidEmail: 'Неправильный формат почты',
   notFuoundUser: 'Пользователь не найден',
+  notFoundMovie: 'Фильм не найден',
 };
 
-module.exports = { errorMessages };
+const answerMessages = {
+  movieDeleted: 'Фильм удалён',
+};
+
+module.exports = { errorMessages, answerMessages };
