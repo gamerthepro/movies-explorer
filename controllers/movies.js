@@ -47,10 +47,12 @@ module.exports.deleteMovie = (req, res, next) => {
       if (!movie) {
         throw new NotFoundError(errorMessages.notFoundMovieId);
       }
-      if (movie.owner._id.toString() !== req.user._id) {
-        throw new ForbiddenError(errorMessages.cannotDeleteMovie);
+      Movie.findByIdAndRemove(req.params.movieId) {
+        if (movie.owner._id.toString() !== req.user._id) {
+          throw new ForbiddenError(errorMessages.cannotDeleteMovie);
+        }
+        res.status(200).send({ movie });
       }
-      res.status(200).send({ movie });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
