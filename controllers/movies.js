@@ -44,14 +44,14 @@ module.exports.deleteMovie = (req, res, next) => {
   Movie.findById(req.params.movieId)
     .orFail(() => new NotFoundError(errorMessages.notFoundMovie))
     .then((movie) => {
-      if (!movie) {
-        throw new NotFoundError(errorMessages.notFoundMovieId);
-      }
-      Movie.findByIdAndRemove(req.params.movieId) {
-        if (movie.owner._id.toString() !== req.user._id) {
-          throw new ForbiddenError(errorMessages.cannotDeleteMovie);
-        }
-        res.status(200).send({ movie });
+      if (movie.owner._id.toString() !== req.user._id) {
+        throw new ForbiddenError(errorMessages.cannotDeleteMovie);
+      } else {
+        Movie.findByIdAndRemove(req.params.movieId)
+          .then(() => {
+            res.send((answerMessages.movieDeleted));
+          })
+          .catch(next);
       }
     })
     .catch((err) => {
