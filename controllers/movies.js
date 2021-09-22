@@ -43,13 +43,16 @@ module.exports.createMovie = (req, res, next) => {
 module.exports.deleteMovie = (req, res, next) => {
   Movie.findById(req.params.movieId)
     .orFail(() => new NotFoundError(errorMessages.notFoundMovie))
-    .then((movie) => {
-      if (movie.owner._id.toString() !== req.user._id) {
+    .then((data) => {
+      if (data.owner._id.toString() !== req.user._id.toString()) {
         throw new ForbiddenError(errorMessages.cannotDeleteMovie);
-      } else {
-        return movie.remove()
-          .then(() => res.send({ message: answerMessages.movieDeleted }));
       }
+      Movie.findByIdAndRemove(req.params.movieId)
+        .then((movie) => res.status(200).send(movie))
+        .catch((err) => {
+          throw new NotFoundError(err.notFoundMovie);
+        })
+        .catch(next);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
