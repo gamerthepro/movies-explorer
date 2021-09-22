@@ -41,17 +41,24 @@ module.exports.createMovie = (req, res, next) => {
 };
 
 module.exports.deleteMovie = (req, res, next) => {
-  Movie.findByIdAndRemove(req.params.movieId)
+  Movie.findById(req.params.movieId)
+    .orFail(() => new NotFoundError(errorMessages.notFoundMovie))
     .then((movie) => {
       if (!movie) {
-        throw new NotFoundError(errorMessages.notFoundMovie)
+        throw new NotFoundError(errorMessages.notFoundMovieId);
       }
-      if (String(movie.owner) !== req.user._id) {
+      if (movie.owner._id.toString() !== req.user._id) {
         throw new ForbiddenError(errorMessages.cannotDeleteMovie);
       }
       res.status(200).send({ movie });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError(errorMessages.incorrectData));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.getSavedMovies = (req, res, next) => {
