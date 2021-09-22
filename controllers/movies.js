@@ -48,7 +48,7 @@ module.exports.deleteMovie = (req, res, next) => {
         throw new ForbiddenError(errorMessages.cannotDeleteMovie);
       }
       Movie.findByIdAndRemove(req.params.movieId)
-        .then((movie) => res.status(200).send(movie))
+        .then((movie) => res.send({ message: answerMessages.movieDeleted }))
         .catch((err) => {
           throw new NotFoundError(err.notFoundMovie);
         })
